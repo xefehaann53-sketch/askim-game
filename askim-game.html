@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aşkım Game - Yakınlaştırılmış</title>
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f0f4f8;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+#gameArea {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  border-radius: 15px;
+  background: linear-gradient(to bottom, #fff, #e0f7fa);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+/* Sen sağda, kafa büyük */
+#myHead {
+  position: absolute;
+  bottom: 50px;
+  right: 100px;
+  width: 120px;
+  transition: transform 0.1s;
+  z-index: 2;
+}
+
+/* Kız arkadaş solda, sopa daha yakın */
+#gf {
+  position: absolute;
+  bottom: 50px;
+  left: 100px;
+  width: 140px;
+  z-index: 2;
+}
+
+/* Sopa kız arkadaşın elinde, kafana çarpacak */
+#stick {
+  position: absolute;
+  bottom: 120px;
+  left: 180px;
+  width: 100px;
+  transform-origin: top left;
+  transform: rotate(-20deg);
+  transition: transform 0.15s;
+  z-index: 3;
+}
+
+/* Mesaj balonları */
+.message {
+  position: absolute;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #ff4d4d;
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-weight: bold;
+  color: #ff0000;
+  animation: rise 1.5s ease-out forwards;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes rise {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-100px); opacity: 0; }
+}
+
+/* Vuruş efekti (renksiz, sadece shake) */
+.hitEffect {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  left: 50%;
+  bottom: 70px;
+  pointer-events: none;
+  z-index: 4;
+  animation: hitAnim 0.3s ease-out forwards;
+}
+
+@keyframes hitAnim {
+  0% { transform: translateX(-50%) scale(1); opacity: 0.7; }
+  50% { transform: translateX(-50%) scale(1.2) rotate(-5deg); opacity: 0.9; }
+  100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+<div id="gameArea">
+  <img id="myHead" src="ben.png" alt="Ben">
+  <img id="gf" src="karakter.png" alt="Kız arkadaş">
+  <img id="stick" src="sopa.png" alt="Sopa">
+</div>
+
+<audio id="hitSound">
+  <source src="vurma_sesi.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const messages = [
+  "Özür dilerim aşkım 😢",
+  "Aaaa yapma 😭",
+  "Aşkım lütfen 🙏",
+  "Tamam tamam dur 😅",
+  "Sevgilim üzülme 😔",
+  "Gerçekten üzgünüm 😢",
+  "Bir daha olmayacak 😭",
+  "Affet lütfen 🙏",
+  "Beni sevdiğini biliyorum 😔",
+  "Yapma aşkım 😩"
+];
+
+const gameArea = document.getElementById('gameArea');
+const myHead = document.getElementById('myHead');
+const stick = document.getElementById('stick');
+const hitSound = document.getElementById('hitSound');
+
+gameArea.addEventListener('click', function() {
+  // Sopa animasyonu
+  stick.style.transform = 'rotate(20deg)';
+  setTimeout(() => stick.style.transform = 'rotate(-20deg)', 200);
+
+  // Kafa sallama
+  myHead.style.transform = 'translateX(-50%) translateY(-25px) rotate(-5deg)';
+  setTimeout(() => myHead.style.transform = 'translateX(-50%) translateY(0) rotate(0deg)', 150);
+
+  // Vuruş efekti (renksiz)
+  const hit = document.createElement('div');
+  hit.classList.add('hitEffect');
+  gameArea.appendChild(hit);
+  setTimeout(() => hit.remove(), 300);
+
+  // Ses çal
+  hitSound.currentTime = 0;
+  hitSound.play();
+
+  // Mesaj balonu
+  const msg = document.createElement('div');
+  msg.classList.add('message');
+  msg.innerText = messages[Math.floor(Math.random() * messages.length)];
+  msg.style.left = Math.random() * 400 + 50 + 'px';
+  msg.style.top = Math.random() * 200 + 50 + 'px';
+  gameArea.appendChild(msg);
+  setTimeout(() => msg.remove(), 1500);
+});
+</script>
+</body>
+</html>
